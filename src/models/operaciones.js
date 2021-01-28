@@ -1,11 +1,11 @@
-const pool = require('../database');
+const pool = require("../database");
 
 function queryGetOperaciones(req, res) {
-    const consulta = 'SELECT * FROM operaciones';
+    const consulta = "SELECT * FROM operaciones";
     pool.query(consulta, (error, result) => {
         if (error) throw error;
         res.json(result);
-    })
+    });
 }
 
 function queryCreateOperacion(req, res) {
@@ -13,8 +13,8 @@ function queryCreateOperacion(req, res) {
     const consulta = `INSERT INTO operaciones (operacion_tipo ,operacion_concepto, operacion_monto, operacion_fecha, operacion_categoria) VALUES ('${tipo}','${concepto}', ${monto}, '${fecha}',${categoria})`;
     pool.query(consulta, (error, result) => {
         if (error) throw error;
-        res.json({ respuesta: 'Operacion Creada' });
-    })
+        res.json({ respuesta: "Operacion Creada" });
+    });
 }
 
 function queryGetOperacion(req, res) {
@@ -23,7 +23,7 @@ function queryGetOperacion(req, res) {
     pool.query(consulta, (error, result) => {
         if (error) throw error;
         res.json(result);
-    })
+    });
 }
 
 function queryDeleteOperacion(req, res) {
@@ -31,8 +31,8 @@ function queryDeleteOperacion(req, res) {
     const consulta = `DELETE FROM operaciones WHERE id_operacion = ${id}`;
     pool.query(consulta, (error, result) => {
         if (error) throw error;
-        res.json({ respuesta: 'Operacion borrada' });
-    })
+        res.json({ respuesta: "Operacion borrada" });
+    });
 }
 
 function queryUpdateOperacion(req, res) {
@@ -41,8 +41,8 @@ function queryUpdateOperacion(req, res) {
     const consulta = `UPDATE operaciones SET operacion_concepto = '${concepto}', operacion_monto = ${monto}, operacion_fecha = '${fecha}', operacion_categoria = ${categoria}  WHERE id_operacion = ${id}`;
     pool.query(consulta, (error, result) => {
         if (error) throw error;
-        res.json({ respuesta: 'Operacion actualizada' });
-    })
+        res.json({ respuesta: "Operacion actualizada" });
+    });
 }
 
 function queryGetCantOperaciones(req, res) {
@@ -51,15 +51,27 @@ function queryGetCantOperaciones(req, res) {
     pool.query(consulta, (error, result) => {
         if (error) throw error;
         res.json(result);
-    })
+    });
 }
 
 function queryGetBalance(req, res) {
-    const consulta = `SELECT SUM(operacion_monto)-(SELECT SUM(operacion_monto) FROM operaciones WHERE operacion_tipo='egreso') AS balance FROM operaciones WHERE operacion_tipo='ingreso'`;
+    // const consulta = `SELECT SUM(operacion_monto)-(SELECT SUM(operacion_monto) FROM operaciones WHERE operacion_tipo='egreso') AS balance FROM operaciones WHERE operacion_tipo='ingreso'`;
+    const consulta = `  SELECT
+                        CASE
+                            WHEN SUM(operacion_monto) IS NULL THEN 0
+                            ELSE SUM(operacion_monto)
+                        END
+                        -  (SELECT
+                            CASE
+                                WHEN SUM(operacion_monto) IS NULL THEN 0
+                                ELSE SUM(operacion_monto)
+                            END
+                            FROM operaciones WHERE operacion_tipo='egreso') AS balance
+                        FROM operaciones WHERE operacion_tipo='ingreso'`;
     pool.query(consulta, (error, result) => {
         if (error) throw error;
         res.json(result);
-    })
+    });
 }
 
 function queryGetPorCategoria(req, res) {
@@ -68,7 +80,7 @@ function queryGetPorCategoria(req, res) {
     pool.query(consulta, (error, result) => {
         if (error) throw error;
         res.json(result);
-    })
+    });
 }
 
 module.exports = {
@@ -79,5 +91,5 @@ module.exports = {
     queryDeleteOperacion,
     queryGetCantOperaciones,
     queryGetBalance,
-    queryGetPorCategoria
+    queryGetPorCategoria,
 };
