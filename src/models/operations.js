@@ -46,7 +46,7 @@ function queryUpdateOperation(req, res) {
 }
 
 function queryGetQuantityOperations(req, res) {
-    const quantity = req.params.cant;
+    const quantity = req.params.quantity;
     const query = `SELECT * FROM operaciones ORDER BY operacion_fecha DESC LIMIT ${quantity}`;
     pool.query(query, (error, result) => {
         if (error) throw error;
@@ -65,8 +65,8 @@ function queryGetBalance(req, res) {
                                 WHEN SUM(operacion_monto) IS NULL THEN 0
                                 ELSE SUM(operacion_monto)
                             END
-                            FROM operaciones WHERE operacion_tipo='egreso') AS balance
-                        FROM operaciones WHERE operacion_tipo='ingreso'`;
+                            FROM operaciones WHERE operacion_tipo='expenses') AS balance
+                        FROM operaciones WHERE operacion_tipo='income'`;
     pool.query(query, (error, result) => {
         if (error) throw error;
         res.json(result);
@@ -74,7 +74,7 @@ function queryGetBalance(req, res) {
 }
 
 function queryGetByCategory(req, res) {
-    const category = req.params.categoria;
+    const category = req.params.category;
     const query = `SELECT * FROM operaciones WHERE operacion_categoria= ${category}`;
     pool.query(query, (error, result) => {
         if (error) throw error;

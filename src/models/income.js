@@ -1,7 +1,7 @@
 const pool = require("../database");
 
 function queryGetIncome(req, res) {
-    const query = `SELECT * FROM operaciones WHERE operacion_tipo = 'Ingreso'`;
+    const query = `SELECT * FROM operaciones WHERE operacion_tipo = 'income'`;
     pool.query(query, (error, result) => {
         if (error) throw error;
         res.json(result);
@@ -9,8 +9,8 @@ function queryGetIncome(req, res) {
 }
 
 function queryGetIncomeByCategory(req, res) {
-    const category = req.params.categoria;
-    const query = `SELECT * FROM operaciones WHERE operacion_tipo = 'Ingreso' AND operacion_categoria = ${category}`;
+    const category = req.params.category;
+    const query = `SELECT * FROM operaciones WHERE operacion_tipo = 'income' AND operacion_categoria = ${category}`;
     pool.query(query, (error, result) => {
         if (error) throw error;
         res.json(result);
